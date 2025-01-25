@@ -29,6 +29,10 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: TOKEN_EXPIRATION_TIME, // Definir a expiração da sessão
   },
+  pages: {
+    signIn: '/auth/login',
+    error: '/auth/error'
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

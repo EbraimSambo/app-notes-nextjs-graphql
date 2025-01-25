@@ -1,10 +1,9 @@
-import AppLoyut from "@/components/layout/app-loyut";
-import Content from "@/components/notes/partials/content";
+"use client";
 
-export default function Home() {
-  return (
-    <AppLoyut>
-    <Content />
-    </AppLoyut>
-  );
-}
+import { redirect } from 'next/navigation';
+
+const Page = () => {
+    redirect('/auth/login');
+};
+
+export default Page;
