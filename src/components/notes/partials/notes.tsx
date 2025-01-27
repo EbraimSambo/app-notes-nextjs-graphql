@@ -10,11 +10,11 @@ import { Note } from '@/config/core/interfaces';
 const Notes = () => {
     const { data: sessionData, status: sessionStatus } = useSession();
     const userId = sessionData?.user?.id ? +sessionData.user.id : null;
-    
+
     const { data, loading } = useGetNotes(userId!);
 
     const [items, setItems] = useState<Array<{ title: string; is_delete: boolean, content: string, id: number, user_id: number, created_at: string }>>([]);
-    const notes = data?.notes.filter((note)=>!note.user_id)
+    const notes = data?.notes.filter((note) => !note.user_id)
     useEffect(() => {
         if (data?.notes) {
             setItems(notes as Note[]);
@@ -33,7 +33,10 @@ const Notes = () => {
 
     return (
         <div className="mt-8">
-           {data &&  notes?.length != 0 && <List
+            {data && notes?.length != 0 &&<div className="my-4">
+                <h2 className='text-2xl font-black to-slate-400'>Notas</h2>
+            </div>}
+            {data && notes?.length != 0 && <List
                 values={items}
                 onChange={({ oldIndex, newIndex }) => setItems(arrayMove(items, oldIndex, newIndex))}
                 renderList={({ children, props }) => (
@@ -47,7 +50,7 @@ const Notes = () => {
                     </li>
                 )}
             />}
-            {data &&  notes?.length  == 0 && (
+            {data && notes?.length == 0 && (
                 <div className="w-full flex items-center justify-center h-[100vh] flex-col ">
                     <div className="max-w-[400px] h-[400px] w-full">
                         <img src={image.src} className='w-full h-full object-cover' alt="" />

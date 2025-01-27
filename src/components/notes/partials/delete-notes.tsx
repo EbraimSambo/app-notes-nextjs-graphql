@@ -26,6 +26,7 @@ const DELETE_NOTE = gql`
 
 const DeleteNotes = ({ note }: { note: Note }) => {
   const [isOpen, setOpen] = React.useState(false);
+  const session = useSession()
   const { handleDelete, loading, message } = useDeleteNote();
 
   const handleMessagePopOut = ({ message, type }: { message: string, type: "none" | "error" | "success" | undefined }) => {

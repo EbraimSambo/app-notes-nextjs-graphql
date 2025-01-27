@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { List, arrayMove } from "react-movable";
-import { useGetNotes } from '../hooks/get-notes';
+import { useGetNotes, useGetNotesDeleted } from '../hooks/get-notes';
 import { useSession } from 'next-auth/react';
 import { Skeleton } from '../../ui/skeleton';
 
@@ -8,12 +8,12 @@ const Trash = () => {
     const { data: sessionData, status: sessionStatus } = useSession();
     const userId = sessionData?.user?.id ? +sessionData.user.id : null;
     
-    const { data, loading } = useGetNotes(userId!);
+    const { data, loading } = useGetNotesDeleted(userId!);
     const [items, setItems] = useState<Array<{ title: string; content: string }>>([]);
 
     useEffect(() => {
-        if (data?.notes) {
-            setItems(data.notes);
+        if (data?.notesDeleted) {
+            setItems(data.notesDeleted);
         }
     }, [data]);
 
@@ -26,9 +26,12 @@ const Trash = () => {
             </div>
         );
     }
-
+    console.log(data)
     return (
         <div className="mt-8">
+            <div className="my-4">
+                <h2 className='text-2xl font-black to-slate-400'>Notas Recicladas</h2>
+            </div>
             <List
                 values={items}
                 onChange={({ oldIndex, newIndex }) => setItems(arrayMove(items, oldIndex, newIndex))}
