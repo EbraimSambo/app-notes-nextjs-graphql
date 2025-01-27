@@ -1,9 +1,11 @@
-"use client";
+import AppLoyut from "@/components/layout/app-loyut";
+import Content from "@/components/notes/partials/content";
+import Image from "next/image";
 
-import { redirect } from 'next/navigation';
-
-const Page = () => {
-    redirect('/auth/login');
-};
-
-export default Page;
+export default function Home() {
+  return (
+    <AppLoyut>
+    <Content />
+    </AppLoyut>
+  );
+}

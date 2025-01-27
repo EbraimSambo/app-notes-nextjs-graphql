@@ -40,6 +40,8 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
       }
+    
+      console.log("Token gerado no JWT Callback:", token); // Log para depuração
       return token;
     },
     async session({ session, token }) {

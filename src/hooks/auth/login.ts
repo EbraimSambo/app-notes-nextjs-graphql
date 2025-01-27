@@ -44,7 +44,7 @@ export function useLogin() {
                 id: data.login.id,
                 email: data.login.email,
                 name: data.login.name,
-                callbackUrl: "/app",
+                callbackUrl: "/",
                 redirect: true
             })
         } catch (err) {
