@@ -6,17 +6,17 @@ import { FaNoteSticky } from "react-icons/fa6";
 import Link from 'next/link';
 import { FcGoogle } from "react-icons/fc";
 import { Separator } from '../ui/separator';
-import { useLogin } from '@/hooks/auth/login';
 import { toast } from '@/hooks/use-toast';
+import { useRegister } from '@/hooks/auth/register';
 import Loader from '../custom/loader';
-const LoginForm = () => {
+const RegisterForm = () => {
     const {
         form,
         handleSubmit,
         loading,
         message
-    } = useLogin()
-    const handleMessagePopOut = ({ message, type }: { message: string, type: "none" | "error" | "success" | undefined }) => {
+    } = useRegister()
+    const handleMessagePopOut = ({ message, type }: { message: string, type?: "none" | "error" | "success" | "none" }) => {
         if (type === "error") {
             return toast({
                 title: "Oops!",
@@ -26,10 +26,10 @@ const LoginForm = () => {
         }
 
         if (type === "success") return toast({
-            title: "Bem vindo de volta",
-            description: "Login efetuado com sucesso",
+            title: "Conta criada",
+            description: message,
             variant: "default",
-            duration: 80000
+            duration: 40000
         });
     };
 
@@ -46,8 +46,16 @@ const LoginForm = () => {
                         <FaNoteSticky className='h-6 w-6 text-primary' />
                     </div>
                     <p className="text-slate-600 font-medium text-center text-sm">
-                        Faca login de forma rapida e segura.
+                        Crie a sua conta de forma rapida e segura.
                     </p>
+                </div>
+                <div className="space-y-1">
+                    <Input disabled={loading} {...form.register("name")} placeholder='Ebraim Sambo' />
+                    {form.formState.errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                            {form.formState.errors.name.message}
+                        </p>
+                    )}
                 </div>
                 <div className="space-y-1">
                     <Input disabled={loading} {...form.register("email")} placeholder='ebraimsambo@gmail.com' />
@@ -58,25 +66,33 @@ const LoginForm = () => {
                     )}
                 </div>
                 <div className="space-y-1">
-                    <Input disabled={loading} {...form.register("password")} type='password' placeholder='sua senha' />
+                    <Input disabled={loading} {...form.register("password")} type='password' placeholder='Crie uma senha' />
                     {form.formState.errors.password && (
                         <p className="text-red-500 text-xs mt-1">
                             {form.formState.errors.password.message}
                         </p>
                     )}
                 </div>
+
+                <div className="space-y-1">
+                    <Input disabled={loading} {...form.register("repeat_password")} type='password' placeholder='Repita a senha criada' />
+                    {form.formState.errors.repeat_password && (
+                        <p className="text-red-500 text-xs mt-1">
+                            {form.formState.errors.repeat_password.message}
+                        </p>
+                    )}
+                </div>
                 <div className="space-y-1">
                     <Button disabled={loading} size={"lg"} type='submit' className='w-full font-black py-4'>
-                    {!loading ? "Entar" :
+                        {!loading ? "Criar Conta" :
                             <Loader atributes={{
                                 color: "#fff"
                             }} />}
                     </Button>
-
                 </div>
             </form>
             <div className="flex gap-1 itmes-center justify-between w-ful my-2">
-            <Separator className='w-full' /> 
+                <Separator className='w-full' />
             </div>
             <div className="space-y-2">
 
@@ -93,4 +109,4 @@ const LoginForm = () => {
     )
 }
 
-export default LoginForm
+export default RegisterForm

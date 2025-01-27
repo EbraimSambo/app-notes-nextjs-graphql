@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast'
 import Loader from '../../custom/loader'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const Noteform = () => {
   const session = useSession()
@@ -27,7 +28,7 @@ const Noteform = () => {
     }
 
     if (type === "sucess") return toast({
-      title: "Bem vindo de volta",
+      title: "Criado uma nova nota",
       description: message,
       variant: "default",
     });
@@ -42,24 +43,37 @@ const Noteform = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen} >
       <div className="">
-        <button onClick={()=>setOpen(true)} className="h-12 w-12 justify-center flex items-center bg-gray-100 rounded-full">
+        <button onClick={() => setOpen(true)} className="h-12 w-12 justify-center flex items-center bg-gray-100 rounded-full">
           <Plus />
         </button>
       </div>
-      <DialogContent className='max-w-[700px] w-full p-0 shadow-none'>
+      <DialogContent className='max-w-[500px] w-full p-0 shadow-none'>
         <div className=' w-full flex items-center justify-center'>
           <form onSubmit={form.handleSubmit(handleSubmit)} className='w-full py-1 px-4'>
-            <div className="h-[50px] w-full">
-              <input type="text" {...form.register("title")} disabled={session.status == "loading" || loading} className='w-full h-full text-slate-600 border-none outline-none' placeholder='Tire uma nota' />
+            <h2 className='text-slate-700 text-xl font-black text-center mt-6'>Criar uma nota</h2>
+            <div className="h-[50px] w-full my-2 border p-2 rounded-lg">
+              <input type="text"
+                {...form.register("title")}
+                disabled={session.status == "loading" || loading}
+                className='w-full h-full text-sm text-slate-600 border-none outline-none'
+                placeholder='Titulo' />
             </div>
-            <div className="">
-              <textarea {...form.register("content")} disabled={session.status == "loading" || loading} placeholder='Tire uma nota' className='w-full h-full text-slate-600 border-none outline-none resize-none' id=""></textarea>
+            <div className="h-40 my-2 border p-2 rounded-lg">
+              <textarea 
+              {...form.register("content")} 
+              disabled={session.status == "loading" || loading} 
+              placeholder='Conteudo' 
+              className='w-full h-full text-slate-600 text-sm border-none outline-none resize-none' id="">
+
+              </textarea>
             </div>
             <div className="flex justify-end pb-1">
-              <button type='submit' disabled={session.status == "loading" || loading} className='px-2 py-2 text-sm font-black rounded-md bg-green-100 text-green-700'>
+              <Button
+              className='font-black'
+               type='submit' disabled={session.status == "loading" || loading} >
                 {!loading ? "Gravar" :
-                  <Loader />}
-              </button>
+                  <Loader atributes={{color: "#FFF"}} />}
+              </Button>
             </div>
           </form>
         </div>

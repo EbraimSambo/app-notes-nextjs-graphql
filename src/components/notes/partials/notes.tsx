@@ -1,20 +1,23 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import { List, arrayMove } from "react-movable";
 import { useGetNotes } from '../hooks/get-notes';
 import { useSession } from 'next-auth/react';
 import { Skeleton } from '../../ui/skeleton';
 import DeleteNotes from './delete-notes';
-
+import image from '@/assets/images/ransom-note-letters-animate.svg'
+import { Note } from '@/config/core/interfaces';
 const Notes = () => {
     const { data: sessionData, status: sessionStatus } = useSession();
     const userId = sessionData?.user?.id ? +sessionData.user.id : null;
     
     const { data, loading } = useGetNotes(userId!);
-    const [items, setItems] = useState<Array<{ title: string; content: string, id: number, user_id: number, created_at: string }>>([]);
 
+    const [items, setItems] = useState<Array<{ title: string; is_delete: boolean, content: string, id: number, user_id: number, created_at: string }>>([]);
+    const notes = data?.notes.filter((note)=>!note.user_id)
     useEffect(() => {
         if (data?.notes) {
-            setItems(data.notes);
+            setItems(notes as Note[]);
         }
     }, [data]);
 
@@ -30,7 +33,7 @@ const Notes = () => {
 
     return (
         <div className="mt-8">
-            <List
+           {data &&  notes?.length != 0 && <List
                 values={items}
                 onChange={({ oldIndex, newIndex }) => setItems(arrayMove(items, oldIndex, newIndex))}
                 renderList={({ children, props }) => (
@@ -43,7 +46,15 @@ const Notes = () => {
                         <DeleteNotes note={value} />
                     </li>
                 )}
-            />
+            />}
+            {data &&  notes?.length  == 0 && (
+                <div className="w-full flex items-center justify-center h-[100vh] flex-col ">
+                    <div className="max-w-[400px] h-[400px] w-full">
+                        <img src={image.src} className='w-full h-full object-cover' alt="" />
+                    </div>
+                    <h2 className='font-bold text-xl text-slate-600 '>Nao existem notas criadas, comece a criar</h2>
+                </div>
+            )}
         </div>
     );
 };

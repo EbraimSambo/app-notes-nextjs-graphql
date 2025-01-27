@@ -14,9 +14,8 @@ export const GET_NOTES_BY_USER_ID: DocumentNode = gql`
 `;
 
 export function useGetNotes(user_id: number) {
-    console.log(user_id)
-    return useQuery<{notes: Note[]}>(GET_NOTES_BY_USER_ID, {
-      variables: { user_id },
-      skip: !user_id,
-    });
-  }
+  return useQuery<{ notes: Note[] }>(GET_NOTES_BY_USER_ID, {
+    variables: { user_id },
+    skip: !user_id,
+  });
+}

@@ -5,18 +5,18 @@ import { signIn } from 'next-auth/react'
 import { DocumentNode, gql, useMutation } from '@apollo/client'
 
 import React from 'react'
+
 const schema = z.object({
-    password: z.string().nonempty('Campo obrigatorio'),
-    email: z.string().email("Email invalido").nonempty("Campo obrigatorio")
+    password: z.string().nonempty('Campo obrigatório'),
+    email: z.string().email("Email inválido").nonempty("Campo obrigatório")
 })
 
 type PropsSchema = z.infer<typeof schema>
 
-
 const LOGIN_MUTATION = gql`
   mutation login($email: String!, $password: String!) {
     login(fields: { email: $email, password: $password }) {
-      id,
+      id
       email
       name
       password
@@ -27,42 +27,57 @@ const LOGIN_MUTATION = gql`
 export function useLogin() {
     const [message, setMessage] = React.useState<{
         message: string,
-        type?: "error" | "sucess" | "none"
-    }>()
+        type?: "error" | "success" | "none"
+    }>({ message: '', type: 'none' })
+    
     const form = useForm<PropsSchema>({
         resolver: zodResolver(schema)
     })
 
-    const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
-
+    const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION)
+const [isLoading, setIsLoading] = React.useState<boolean>(false); 
     async function handleSubmit(fields: PropsSchema) {
-        setMessage({ message: "", type: undefined })
+        setMessage({ message: '', type: 'none' }) // Resetando a mensagem antes da mutação
+        setIsLoading(true);
         try {
-            await login({ variables: { email: fields.email, password: fields.password, } })
-            console.log(data.login)
-            return signIn("credentials", {
-                id: data.login.id,
-                email: data.login.email,
-                name: data.login.name,
-                callbackUrl: "/",
-                redirect: true
+            // Realiza a mutação para logar
+            const { data: loginData } = await login({
+                variables: { email: fields.email, password: fields.password }
             })
-        } catch (err) {
-            console.log(error)
-            console.log(error?.extraInfo)
-            if(error?.networkError){
-               return setMessage({ message: 'Erro de conexao, verifique a sua internete', type: "error" })
+            
+            if (loginData?.login) {
+                setMessage({ message: 'Login feito com sucesso.', type: 'success' })
+                setIsLoading(true);
+                await signIn("credentials", {
+                    id: loginData.login.id,
+                    email: loginData.login.email,
+                    name: loginData.login.name,
+                    callbackUrl: "/",
+                    redirect: true
+                })
+            } else {
+                setIsLoading(false);
+                setMessage({ message: 'Erro ao fazer login. Tente novamente.', type: 'error' })
             }
-            setMessage({ message: error?.message as string || 'Aconteceu algo de forma inesperada', type: "error" })
-        }
+        } catch (err) {
+            console.error('Erro durante o login:', err)
 
+            // Tratamento de erro para falhas de rede
+            if (error?.networkError) {
+                setMessage({ message: 'Erro de conexão, verifique sua internet.', type: 'error' })
+            } else {
+                // Erro genérico
+                setMessage({ message: error?.message || 'Aconteceu algo inesperado.', type: 'error' })
+            }
+        }finally {
+            setIsLoading(false); // Desativando o loading após a operação
+        }
     }
 
     return {
         form,
         handleSubmit,
-        loading,
+        loading: isLoading || loading,
         message
     }
-
 }
